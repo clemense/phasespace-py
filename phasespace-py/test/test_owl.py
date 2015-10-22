@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import owl
 
 if __name__ == "__main__":
@@ -22,7 +23,9 @@ if __name__ == "__main__":
     # - MARKER Macro: builds a marker id out of a tracker id and marker index
     # - SET_LED: the following 'i' is an integer representing the LED ID of the marker
     init_marker_count = 72
-    markers = [owl.Marker()] * init_marker_count
+    init_camera_count = 4
+    markers = owl.createMarkers(init_marker_count)
+    cameras = owl.createCameras(init_camera_count)
     for i in range(init_marker_count):
         owl.markeri(owl.MARKER(tracker, i), owl.SET_LED, i);
 
@@ -44,10 +47,13 @@ if __name__ == "__main__":
     # enables the streaming of data
     owl.setInteger(owl.STREAMING, owl.ENABLE);
     
+    # wait till system is started
+    time.sleep(.5)
+        
     num_readings = 0
     while (num_readings < 100):
         # queries the server for new markers data and returns the number of current active markers (0 means old data)
-        num_markers = owl.getMarkers((owl.Marker*len(markers))(*markers), init_marker_count);
+        num_markers = owl.getMarkers(markers, len(markers));
         if (owl.getError() != owl.NO_ERROR):
             print("Error while reading markers' positions: {}".format(owl.getError()))
             owl.done()
@@ -59,9 +65,14 @@ if __name__ == "__main__":
         
         num_readings += 1
         
+        #num_cameras = owl.getCameras(cameras, init_camera_count);
+        #print("Found {} cameras.".format(num_cameras))
+        #for i in range(num_cameras):
+        #    print("Camera {} = ({}, {}, {}, {}, {}, {}, {}) ".format(i, cameras[i].pose[0], cameras[i].pose[1], cameras[i].pose[2], cameras[i].pose[3], cameras[i].pose[4], cameras[i].pose[5], cameras[i].pose[6]))
+        
         print("Found {} markers.".format(num_markers))
         for i in range(num_markers):
-#            if (markers[i].cond > 0):
+            if (markers[i].cond > 0):
                 print("Marker {} = ({}, {}, {}) (cond = {})".format(i, markers[i].x, markers[i].y, markers[i].z, markers[i].cond))
     
     owl.done()

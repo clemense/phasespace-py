@@ -300,3 +300,16 @@ getIntegerv.argtypes = [ctypes.c_uint, ctypes.POINTER(ctypes.c_int)]
 getString = lib.owlGetString
 getString.restype = ctypes.c_int
 getString.argtypes = [ctypes.c_uint, ctypes.c_char_p]
+
+
+
+### Helper functions
+
+def createCameras(num):
+    return (Camera * num)(*([Camera()] * num))
+
+def createMarkers(num):
+    return (Marker * num)(*([Marker()] * num))
+
+def createRigids(num):
+    return (Rigid * num)(*([Rigid()] * num))
